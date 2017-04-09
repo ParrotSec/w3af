@@ -1,3 +1,10 @@
+w3af (1.1svn5547-1parrot1) testing; urgency=medium
+
+  * Replace python-support with dh-python.
+  * Update from python-pypdf to python-pypdf2.
+
+ -- Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>  Sun, 09 Apr 2017 16:53:20 +0200
+
 w3af (1.1svn5547-1parrot0) testing; urgency=medium
 
   * Initial release.

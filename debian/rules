@@ -36,7 +36,7 @@ build-indep: build
 binary-indep: install
 	dh_testdir
 	dh_testroot
-	dh_pysupport
+	dh_python2
 	dh_installman
 	dh_installmenu
 	dh_installdocs

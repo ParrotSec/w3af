@@ -2,7 +2,7 @@ Source: w3af
 Section: net
 Priority: extra
 Maintainer: Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>
-Build-Depends: debhelper (>= 9), python-support
+Build-Depends: debhelper (>= 9), dh-python
 Standards-Version: 3.9.3
 Homepage: http://w3af.sourceforge.net/
 XS-Python-Version: all
@@ -29,7 +29,7 @@ Description: framework to find and exploit web application vulnerabilities
 Package: w3af-console
 Architecture: all
 XB-Python-Version: ${python:Versions}
-Depends: ${python:Depends}, ${misc:Depends}, python-simplejson, python-beautifulsoup, python-soappy, python-pypdf, python-openssl, python-pysqlite2, python-svn, python-chardet, python-pybloomfiltermmap
+Depends: ${python:Depends}, ${misc:Depends}, python-simplejson, python-beautifulsoup, python-soappy, python-pypdf2, python-openssl, python-pysqlite2, python-svn, python-chardet, python-pybloomfiltermmap
 Conflicts: python-json
 Description: framework to find and exploit web application vulnerabilities (CLI only)
  w3af is a Web Application Attack and Audit Framework which aims
