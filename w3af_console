@@ -47,6 +47,17 @@ Options:
     -s <script_file> or --script=<script_file>
         Run <script_file> script.
 
+    -n or --no-update
+        No update check will be made when starting. This option takes 
+        precedence over the 'auto-update' setting in 'startup.conf' file.
+     
+    -f or --force-update
+        An update check will be made when starting. This option takes 
+        precedence over the 'auto-update' setting in 'startup.conf' file.
+     
+    -r <rev number> or --revision <rev number>
+    	Force to update to <rev number>.
+    
     -p <profile> or --profile=<profile>
         Run with the selected <profile>
     
@@ -61,8 +72,8 @@ def usage():
 
 def main():
     try:
-        long_options = ['script=', 'help', 'version', 'test-all',
-                        'profile=', 'profile-run']
+        long_options = ['script=', 'help', 'version', 'test-all', 'no-update',
+                        'force-update', 'profile=', 'revision=', 'profile-run']
         opts, args = getopt.getopt(sys.argv[1:], "ehvts:nfpP:r:", long_options)
     except getopt.GetoptError, e:
         # print help information and exit:
@@ -71,7 +82,7 @@ def main():
     scriptFile = None
     forceProfile = None
     profile = None
-    doupdate = False
+    doupdate = None
     rev = 0 # HEAD revision
     
     for o, a in opts:
@@ -99,6 +110,21 @@ def main():
         if o in ('-v', '--version'):
             print get_w3af_version()
             return 0
+        if o in ('-f', '--force-update'):
+            doupdate = True
+        elif o in ('-n', '--no-update'):
+            doupdate = False
+        if o in ('-r', '--revision'):
+        	doupdate = True
+        	a = a.upper()
+        	if a in ('HEAD', 'PREV'):
+        		rev = 0 if (a == 'HEAD') else -1
+        	else:
+	        	try:
+	        		rev = int(a)
+	        	except ValueError:
+	        		om.out.error("Invalid value for revision number. Expected int.")
+	        		return -3
     
     # console
     from core.ui.consoleUi.consoleUi import consoleUi
