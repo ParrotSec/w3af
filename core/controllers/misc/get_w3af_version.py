@@ -33,5 +33,4 @@ def get_w3af_version():
     return ('w3af - Web Application Attack and Audit Framework\n'
             'Version: 1.2\n'
             'Revision: %s\n'
-            'Distribution: Debian\n'
             'Author: Andres Riancho and the w3af team.') % rev

@@ -34,7 +34,7 @@ def dependency_check():
     '''
     #mem_test('at start')
     om.out.debug('Checking core dependencies')
-
+    
     # Check python version
     major, minor, micro, releaselevel, serial = sys.version_info
     if major == 2:
@@ -46,13 +46,13 @@ def dependency_check():
         msg += ' w3af works as expected at w3af-develop@lists.sourceforge.net !'
         print msg
         sys.exit( 1 )
-
+        
     reasonForExit = False
     packages = []
     packages_debian = []
     packages_mac_ports = []
     additional_information = []
-
+    
     if platform.system() != 'Windows':
         try:
             from pybloomfilter import BloomFilter as mmap_filter
@@ -73,11 +73,11 @@ def dependency_check():
         msg += ' can download it from http://code.google.com/p/esmre/ or run'
         msg += ' the following command to install it:\n'
         msg += '    sudo easy_install esmre\n'
-
+        
         #packages.append('esmre')
         #packages.append('esm')
         #additional_information.append(msg)
-
+    
     # nltk raises a warning... which I want to ignore...
     # This is the original warning:
     #
@@ -88,6 +88,8 @@ def dependency_check():
     warnings.filterwarnings('ignore', '.*',)
     #mem_test('after esmre import')
     if not lazy_load('nltk'):
+        packages.append('nltk')
+        packages_debian.append('python-nltk')
         #TODO
         #packages_mac_port.append()
         msg  = '    If you can not install nltk, please try the following:\n'
@@ -100,8 +102,10 @@ def dependency_check():
         msg += '        tar -xzvf nltk-2.0b9.tar.gz\n'
         msg += '        cd nltk-2.0b9\n'
         msg += '        python setup.py install'
+        additional_information.append(msg)
+        reasonForExit = True
     #mem_test('after nltk import')
-
+    
     if not lazy_load('extlib.SOAPpy.SOAPpy'):
         if not lazy_load('SOAPpy'):
             packages.append('SOAPpy')
@@ -121,7 +125,7 @@ def dependency_check():
             #TODO
             #packages_mac_port.append()
             reasonForExit = True
-    #mem_test('after pypdf import')
+    #mem_test('after pypdf import')   
     try:
         from OpenSSL import SSL
     except:
@@ -146,7 +150,7 @@ def dependency_check():
             msg  = '    It looks like your pysvn library installation is broken\n'
             msg += '    (are you using BT4 R2?). The error we get when importing\n'
             msg += '    the pysvn library is "%s". \n\n' % e.message
-
+            
             msg += '    This is a BackTrack issue (works with Ubuntu 8.04 and 10.10)\n'
             msg += '    that was fixed by them in their devel repositories, in order to\n'
             msg += '    enable them you need to follow these steps:\n'
@@ -160,7 +164,7 @@ def dependency_check():
         packages_debian.append('python-svn')
         #TODO
         #packages_mac_port.append()
-        reasonForExit = True
+        reasonForExit = True       
     #mem_test('after pysvn import')
     import logging
     logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
@@ -210,7 +214,7 @@ def dependency_check():
     #Now exit if necessary
     if reasonForExit:
         exit(1)
-
+        
 
 def mem_test(when):
     from core.controllers.profiling.ps_mem import get_memory_usage, human
