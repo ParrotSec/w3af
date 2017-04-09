@@ -824,11 +824,11 @@ class StartUpConfig(object):
     FREQ_WEEKLY = 'W' # [W]eekly
     FREQ_MONTHLY = 'M' # [M]onthly
     # DEFAULT VALUES
-    DEFAULTS = {'auto-update': 'false', 'frequency': 'D',
+    DEFAULTS = {'auto-update': 'true', 'frequency': 'D',
                 'last-update': 'None', 'last-rev': 0}
 
     def __init__(self):
-
+        
         self._start_cfg_file = os.path.join(get_home_dir(), 'startup.conf')
         self._start_section = 'STARTUP_CONFIG'
         self._config = ConfigParser.ConfigParser()
