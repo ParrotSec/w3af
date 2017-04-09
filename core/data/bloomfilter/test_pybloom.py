@@ -4,7 +4,6 @@ import string
 
 from pybloom import BloomFilter
 from core.data.bloomfilter.bloomfilter import scalable_bloomfilter
-from core.controllers.misc.temp_dir import create_temp_dir
 
 
 class TestBloomFilter(unittest.TestCase):
@@ -38,10 +37,7 @@ class TestBloomFilter(unittest.TestCase):
         self.assertEqual(rnd in f, True)
 
 class TestScalableBloomfilter(unittest.TestCase):
-    
-    def setUp(self):
-        create_temp_dir()
-        
+
     def test_bloom_int(self):
 
         f = scalable_bloomfilter(mode=scalable_bloomfilter.SMALL_SET_GROWTH)
