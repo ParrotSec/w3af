@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 
 if (length ($ENV{'QUERY_STRING'}) > 0){
     $buffer = $ENV{'QUERY_STRING'};
