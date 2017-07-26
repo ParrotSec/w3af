@@ -1,2 +1,3 @@
 version=3
-http://sf.net/w3af/w3af-(\d[\d.]+)\.tar\.bz2
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/w3af-$1\.tar\.gz/ \
+  https://github.com/andresriancho/w3af/tags .*/v?(\d\S*)\.tar\.gz

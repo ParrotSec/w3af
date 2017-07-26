@@ -1,0 +1,151 @@
+Description: libmproxy replaced by mitmproxy
+ Since mitmproxy version 0.17 the python package has been renamed from
+ libmproxy to mitmproxy.
+Author: Sophie Brun <sophie@ouaza.com>
+Last-Update: 2016-09-13
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/w3af/core/controllers/daemons/proxy/handler.py
++++ b/w3af/core/controllers/daemons/proxy/handler.py
+@@ -23,8 +23,8 @@ import threading
+ import traceback
+ 
+ from netlib.odict import ODictCaseless
+-from libmproxy.controller import Master
+-from libmproxy.protocol.http import HTTPResponse as LibMITMProxyHTTPResponse
++from mitmproxy.controller import Master
++from mitmproxy.protocol.http import HTTPResponse as LibMITMProxyHTTPResponse
+ 
+ from w3af.core.data.parsers.doc.url import URL
+ from w3af.core.data.url.HTTPRequest import HTTPRequest
+@@ -38,18 +38,17 @@ class ProxyHandler(Master):
+     """
+     All HTTP traffic goes through these (main) methods:
+ 
+-        * handle_request(request libmproxy.http.HTTPRequest) - if we return
++        * handle_request(request mitmproxy.http.HTTPRequest) - if we return
+           HTTPResponse here then proxy just response to client
+ 
+-        * handle_response(response libmproxy.http.HTTPResponse) - is called
++        * handle_response(response mitmproxy.http.HTTPResponse) - is called
+           before sending response to client
+ 
+-        * handle_error(err libmproxy.proxy.primitives.Error)
++        * handle_error(err mitmproxy.proxy.primitives.Error)
+ 
+     More hooks are available and can be used to intercept/modify HTTP traffic,
+     see mitmproxy docs for more information.
+ 
+-    http://mitmproxy.org/doc/scripting/libmproxy.html
+     http://mitmproxy.org/doc/
+     """
+ 
+@@ -60,7 +59,7 @@ class ProxyHandler(Master):
+ 
+     def _to_w3af_request(self, request):
+         """
+-        Convert libmproxy.http.HTTPRequest to
++        Convert mitmproxy.http.HTTPRequest to
+         w3af.core.data.url.HTTPRequest.HTTPRequest
+         """
+         url = '%s://%s:%s%s' % (request.scheme, request.host,
+@@ -71,10 +70,10 @@ class ProxyHandler(Master):
+                            headers=request.headers.items(),
+                            method=request.method)
+ 
+-    def _to_libmproxy_response(self, request, response):
++    def _to_mitmproxy_response(self, request, response):
+         """
+         Convert w3af.core.data.url.HTTPResponse.HTTPResponse  to
+-        libmproxy.http.HTTPResponse
++        mitmproxy.http.HTTPResponse
+         """
+         charset = response.charset
+ 
+@@ -116,7 +115,7 @@ class ProxyHandler(Master):
+                            grep=grep,
+                            # This is an important one, which needs to be
+                            # properly documented. What happens here is that
+-                           # libmproxy receives a request from xurllib
++                           # mitmproxy receives a request from xurllib
+                            # configured to send requests via proxy, and then
+                            # another xurllib with the same proxy config tries
+                            # to forward the request. Since it has a proxy config
+@@ -158,7 +157,7 @@ class ProxyHandler(Master):
+         This method handles EVERY request that was send by the browser, we
+         decide if the request needs to be trapped and queue it if needed.
+ 
+-        :param flow: A libmproxy flow containing the request
++        :param flow: A mitmproxy flow containing the request
+         """
+         self.parent_process.total_handled_requests += 1
+ 
+@@ -178,7 +177,7 @@ class ProxyHandler(Master):
+             * Send it to the wire using our uri_opener
+             * Set the response
+ 
+-        :param flow: A libmproxy flow containing the request
++        :param flow: A mitmproxy flow containing the request
+         """
+         http_request = self._to_w3af_request(flow.request)
+ 
+@@ -191,5 +190,5 @@ class ProxyHandler(Master):
+                                                         trace=trace)
+ 
+         # Send the response (success|error) to the browser
+-        http_response = self._to_libmproxy_response(flow.request, http_response)
++        http_response = self._to_mitmproxy_response(flow.request, http_response)
+         flow.reply(http_response)
+--- a/w3af/core/controllers/daemons/proxy/intercept_handler.py
++++ b/w3af/core/controllers/daemons/proxy/intercept_handler.py
+@@ -37,7 +37,7 @@ class InterceptProxyHandler(ProxyHandler
+         The handle_request method is run in the same thread each time, so we
+         need to run in a thread.
+ 
+-        :param flow: A libmproxy flow containing the request
++        :param flow: A mitmproxy flow containing the request
+         :return: None, we reply to flow
+         """
+         http_request = self._to_w3af_request(flow.request)
+@@ -56,7 +56,7 @@ class InterceptProxyHandler(ProxyHandler
+                                                         trace=trace)
+ 
+         # Send the response (success|error) to the browser
+-        http_response = self._to_libmproxy_response(flow.request, http_response)
++        http_response = self._to_mitmproxy_response(flow.request, http_response)
+         flow.reply(http_response)
+ 
+     def on_request_drop(self, http_request):
+--- a/w3af/core/controllers/daemons/proxy/proxy.py
++++ b/w3af/core/controllers/daemons/proxy/proxy.py
+@@ -24,8 +24,8 @@ import time
+ import os
+ 
+ from multiprocessing.dummy import Process
+-from libmproxy.proxy.server import ProxyServer, ServerException
+-from libmproxy.proxy.config import ProxyConfig
++from mitmproxy.proxy.server import ProxyServer, ServerException
++from mitmproxy.proxy.config import ProxyConfig
+ 
+ import w3af.core.controllers.output_manager as om
+ 
+--- a/w3af/plugins/crawl/spider_man.py
++++ b/w3af/plugins/crawl/spider_man.py
+@@ -165,7 +165,7 @@ class LoggingHandler(ProxyHandler):
+             * Check if it's a request to indicate we should finish, if not
+             * Parse it and send to the core
+ 
+-        :param flow: A libmproxy flow containing the request
++        :param flow: A mitmproxy flow containing the request
+         """
+         http_request = self._to_w3af_request(flow.request)
+ 
+@@ -207,7 +207,7 @@ class LoggingHandler(ProxyHandler):
+             om.out.information(msg % cookie_value)
+ 
+         # Send the response (success|error) to the browser
+-        http_response = self._to_libmproxy_response(flow.request, http_response)
++        http_response = self._to_mitmproxy_response(flow.request, http_response)
+         flow.reply(http_response)
+ 
+     def _is_terminate_favicon(self, http_request):

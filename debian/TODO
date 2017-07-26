@@ -1,0 +1,7 @@
+# Add your name is you are taking care of a task
+# Fell free to expand a task in smaller tasks if possible
+
+- Remove source-is-missing
+  - Create a DFSG orig
+- privacy-breach
+  - Most of them belong to tests that can be removed form binary. Removing tests with "-X tests" needs to purge the imports.

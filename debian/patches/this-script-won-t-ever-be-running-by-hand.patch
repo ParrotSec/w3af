@@ -1,0 +1,18 @@
+From f7f391209cc2f0e0605d566d101927fe01a8a6ef Mon Sep 17 00:00:00 2001
+From: Luciano Bello <luciano@debian.org>
+Date: Tue, 26 Apr 2016 13:46:52 +0200
+Subject: this script won't ever be running by hand.
+
+---
+ w3af/plugins/attack/payloads/webshell/webshell.pl | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/w3af/plugins/attack/payloads/webshell/webshell.pl b/w3af/plugins/attack/payloads/webshell/webshell.pl
+index 5188040..880ef9a 100644
+--- a/w3af/plugins/attack/payloads/webshell/webshell.pl
++++ b/w3af/plugins/attack/payloads/webshell/webshell.pl
+@@ -1,4 +1,3 @@
+-#!/usr/bin/perl
+ 
+ if (length ($ENV{'QUERY_STRING'}) > 0){
+     $buffer = $ENV{'QUERY_STRING'};

@@ -1,0 +1,14 @@
+Description: libmproxy.proxy.server does not provide ProxyServerError
+Author: Luciano Bello <luciano@debian.org>
+Bug: https://github.com/mitmproxy/mitmproxy/issues/1122
+--- a/w3af/core/controllers/daemons/proxy/proxy.py
++++ b/w3af/core/controllers/daemons/proxy/proxy.py
+@@ -24,7 +24,7 @@ import time
+ import os
+ 
+ from multiprocessing.dummy import Process
+-from libmproxy.proxy.server import ProxyServer, ProxyServerError
++from libmproxy.proxy.server import ProxyServer, ServerException
+ from libmproxy.proxy.config import ProxyConfig
+ 
+ import w3af.core.controllers.output_manager as om

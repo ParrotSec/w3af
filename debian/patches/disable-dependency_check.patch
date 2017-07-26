@@ -1,0 +1,27 @@
+--- a/w3af_console
++++ b/w3af_console
+@@ -8,10 +8,6 @@ import os
+ import base64
+  
+ 
+-# Check if I have all needed dependencies
+-from w3af.core.controllers.dependency_check.dependency_check import dependency_check
+-dependency_check()
+-
+ from w3af.core.ui.console.console_ui import ConsoleUI
+ from w3af.core.controllers.misc.get_w3af_version import get_w3af_version
+ import w3af.core.controllers.output_manager as om
+--- a/w3af_gui
++++ b/w3af_gui
+@@ -7,11 +7,6 @@ import sys
+ import os
+ import base64
+ 
+-# Perform the GTK UI dependency check, this will verify that the current system
+-# has all the modules required to run w3af (including the core dependencies)
+-from w3af.core.ui.gui.dependency_check.dependency_check import dependency_check
+-dependency_check()
+-
+ import w3af.core.controllers.output_manager as om
+ 
+       

@@ -1,0 +1,6 @@
+w3af/ usr/share/w3af/
+profiles/ usr/share/w3af/
+w3af_console usr/share/w3af/
+mitmproxy/ usr/share/w3af/
+netlib/ usr/share/w3af/
+pathod/ usr/share/w3af/

@@ -1,5 +1,6 @@
-01-debian-as-distribution.patch
-03-webshell.pl-is-not-script.patch
+let-upstream-know-this-is-a-Debian-package.patch
+this-script-won-t-ever-be-running-by-hand.patch
 disable-auto-update.patch
-dep-a-la-deb_01_nltk.patch
-disable-pybloom.patch
+disable-dependency_check.patch
+mitmproxy_ProxyServerError_ServerException.patch
+libmproxy-replaced-by-mitmproxy.patch

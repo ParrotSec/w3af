@@ -1,24 +1,20 @@
---- a/core/controllers/auto_update/auto_update.py
-+++ b/core/controllers/auto_update/auto_update.py
-@@ -824,11 +824,11 @@
-     FREQ_WEEKLY = 'W' # [W]eekly
-     FREQ_MONTHLY = 'M' # [M]onthly
-     # DEFAULT VALUES
--    DEFAULTS = {'auto-update': 'true', 'frequency': 'D',
-+    DEFAULTS = {'auto-update': 'false', 'frequency': 'D',
-                 'last-update': 'None', 'last-rev': 0}
- 
-     def __init__(self):
--        
-+
-         self._start_cfg_file = os.path.join(get_home_dir(), 'startup.conf')
-         self._start_section = 'STARTUP_CONFIG'
-         self._config = ConfigParser.ConfigParser()
+From 16b3dba93a5cd8929b69164104a8f00ed3c39b15 Mon Sep 17 00:00:00 2001
+From: Luciano Bello <luciano@debian.org>
+Date: Tue, 26 Apr 2016 13:46:53 +0200
+Subject: disable-auto-update
+
+---
+ w3af_console | 18 +++---------------
+ w3af_gui     | 17 ++---------------
+ 2 files changed, 5 insertions(+), 30 deletions(-)
+
+diff --git a/w3af_console b/w3af_console
+index cdb1bfc..0ea0f70 100755
 --- a/w3af_console
 +++ b/w3af_console
-@@ -47,17 +47,6 @@
+@@ -34,14 +34,6 @@ Options:
      -s <script_file> or --script=<script_file>
-         Run <script_file> script.
+         Run <script_file> script
  
 -    -n or --no-update
 -        No update check will be made when starting. This option takes 
@@ -28,57 +24,45 @@
 -        An update check will be made when starting. This option takes 
 -        precedence over the 'auto-update' setting in 'startup.conf' file.
 -     
--    -r <rev number> or --revision <rev number>
--    	Force to update to <rev number>.
--    
      -p <profile> or --profile=<profile>
          Run with the selected <profile>
      
-@@ -72,8 +61,8 @@
+@@ -110,8 +102,8 @@ def _generate_run_commands(script_file, profile, force_profile):
  
  def main():
      try:
--        long_options = ['script=', 'help', 'version', 'test-all', 'no-update',
--                        'force-update', 'profile=', 'revision=', 'profile-run']
-+        long_options = ['script=', 'help', 'version', 'test-all',
-+                        'profile=', 'profile-run']
-         opts, args = getopt.getopt(sys.argv[1:], "ehvts:nfpP:r:", long_options)
-     except getopt.GetoptError, e:
-         # print help information and exit:
-@@ -82,7 +71,7 @@
-     scriptFile = None
-     forceProfile = None
+-        long_options = ['script=', 'help', 'version', 'no-update',
+-                        'force-update', 'profile=', 'commit=', 'profile-run']
++        long_options = ['script=', 'help', 'version',
++                        'profile=', 'commit=', 'profile-run']
+         opts, _ = getopt.getopt(sys.argv[1:], "ehvs:nfp:P:", long_options)
+     except getopt.GetoptError:
+         # Print help information and exit
+@@ -121,7 +113,7 @@ def main():
+     script_file = None
+     force_profile = None
      profile = None
--    doupdate = None
-+    doupdate = False
-     rev = 0 # HEAD revision
+-    do_update = None
++    do_update = False
      
      for o, a in opts:
-@@ -110,21 +99,6 @@
+         if o == "-e":
+@@ -144,10 +136,6 @@ def main():
          if o in ('-v', '--version'):
-             print get_w3af_version()
+             print(get_w3af_version())
              return 0
 -        if o in ('-f', '--force-update'):
--            doupdate = True
+-            do_update = True
 -        elif o in ('-n', '--no-update'):
--            doupdate = False
--        if o in ('-r', '--revision'):
--        	doupdate = True
--        	a = a.upper()
--        	if a in ('HEAD', 'PREV'):
--        		rev = 0 if (a == 'HEAD') else -1
--        	else:
--	        	try:
--	        		rev = int(a)
--	        	except ValueError:
--	        		om.out.error("Invalid value for revision number. Expected int.")
--	        		return -3
+-            do_update = False
      
-     # console
-     from core.ui.consoleUi.consoleUi import consoleUi
+     commands_to_run = _generate_run_commands(script_file, profile, force_profile)
+     console = ConsoleUI(commands=commands_to_run, do_upd=do_update)
+diff --git a/w3af_gui b/w3af_gui
+index c480ae0..6c98173 100755
 --- a/w3af_gui
 +++ b/w3af_gui
-@@ -38,14 +38,6 @@
+@@ -27,14 +27,6 @@ Options:
      -h or --help
          Display this help message.
  
@@ -93,25 +77,26 @@
      -p <profile> or --profile=<profile>
          Run with the selected <profile>
  
-@@ -57,14 +49,14 @@
+@@ -61,7 +53,7 @@ def usage():
  
  def main():
      try:
 -        long_options = ['help', 'no-update', 'force-update', 'profile=']
 +        long_options = ['help', 'profile=']
-         opts, args = getopt.getopt(sys.argv[1:], "ehnfp:", long_options)
+         opts, _ = getopt.getopt(sys.argv[1:], "ehnfp:", long_options)
      except getopt.GetoptError:
          # print help information and exit:
-         usage()
+@@ -69,7 +61,7 @@ def main():
          return -3
+     
      profile = None
 -    doupdate = None
 +    doupdate = False
+     
      for o, a in opts:
-         if o in ( "-e"  ):
-             # easter egg
-@@ -78,11 +70,6 @@
-         if o == "-h":
+         if o in ("-e"):
+@@ -83,11 +75,6 @@ def main():
+         if o in ('-h', '--help'):
              usage()
              return 0
 -        if o in ('-f', '--force-update'):

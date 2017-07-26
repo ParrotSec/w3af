@@ -1,21 +1,27 @@
 Source: w3af
 Section: net
 Priority: extra
-Maintainer: Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>
-Build-Depends: debhelper (>= 9), dh-python
-Standards-Version: 3.9.3
-Homepage: http://w3af.sourceforge.net/
-XS-Python-Version: all
+Maintainer: Debian Security Tools Packaging Team <pkg-security-team@lists.alioth.debian.org>
+Uploaders: Luciano Bello <luciano@debian.org>
+Build-Depends: debhelper (>= 9), dh-python, python (>= 2.6.6-3~)
+Standards-Version: 3.9.8
+Homepage: https://github.com/andresriancho/w3af/
+Vcs-Git: https://anonscm.debian.org/git/pkg-security/w3af.git
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-security/w3af.git
+X-Python-Version: >= 2.7
 
 Package: w3af
 Architecture: all
-XB-Python-Version: ${python:Versions}
-Depends: ${python:Depends}, ${misc:Depends}, w3af-console (>= ${binary:Version}), python-gtk2 (>= 2.12), graphviz, python-gtksourceview2
+Depends: ${misc:Depends}, ${python:Depends},
+         graphviz,
+         python-gtksourceview2,
+         python-webkit,
+         w3af-console (>= ${binary:Version})
 Description: framework to find and exploit web application vulnerabilities
  w3af is a Web Application Attack and Audit Framework which aims
- to identify and exploit all web application vulnerabilities. 
+ to identify and exploit all web application vulnerabilities.
  .
- This package provides a graphical user interface (GUI) for the framework.  If 
+ This package provides a graphical user interface (GUI) for the framework.  If
  you want a command-line application only, install w3af-console.
  .
  The framework has been called the "metasploit for the web", but it's actually
@@ -28,14 +34,50 @@ Description: framework to find and exploit web application vulnerabilities
 
 Package: w3af-console
 Architecture: all
-XB-Python-Version: ${python:Versions}
-Depends: ${python:Depends}, ${misc:Depends}, python-simplejson, python-beautifulsoup, python-soappy, python-pypdf2, python-openssl, python-pysqlite2, python-svn, python-chardet, python-pybloomfiltermmap
+Depends: ${misc:Depends}, ${python:Depends},
+         mitmproxy (>= 0.17),
+         python-chardet,
+         python-cluster,
+         python-concurrent.futures,
+         python-darts.lib.utils.lru (>=0.5-4),
+         python-enchant,
+         python-esmre,
+         python-flask,
+         python-futures,
+         python-git,
+         python-guess-language,
+         python-halberd,
+         python-jinja2,
+         python-markdown,
+         python-msgpack,
+         python-ndg-httpsclient,
+         python-nltk,
+         python-ntlm,
+         python-openssl,
+         python-pdfminer,
+         python-phply,
+         python-psutil,
+         python-pyasn1,
+         python-pybloomfiltermmap,
+         python-pyclamd,
+         python-pygithub,
+         python-ruamel.ordereddict,
+         python-lxml,
+         python-scapy,
+         python-simplejson,
+         python-tblib,
+         python-termcolor,
+         python-vulndb,
+         python-yaml,
+         tcpdump,
+         python-xdot
 Conflicts: python-json
+Breaks: kali-menu (<< 2016.3.1)
 Description: framework to find and exploit web application vulnerabilities (CLI only)
  w3af is a Web Application Attack and Audit Framework which aims
  to identify and exploit all web application vulnerabilities.
  .
- This package provides a command line interface (CLI) only. The graphical user 
+ This package provides a command line interface (CLI) only. The graphical user
  interface (GUI) is provided by the package w3af.
  .
  The framework has been called the "metasploit for the web", but it's actually
@@ -45,4 +87,3 @@ Description: framework to find and exploit web application vulnerabilities (CLI 
  The w3af core and it's plugins are fully written in Python. The project has
  more than 130 plugins, which identify and exploit SQL injection, cross site
  scripting (XSS), remote file inclusion and more.
-

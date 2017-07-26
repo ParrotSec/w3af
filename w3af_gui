@@ -1,37 +1,26 @@
 #!/usr/bin/env python
 
-import getopt, sys, os
-import gettext
+from __future__ import print_function
 
-# First of all, we need to change the working directory to the directory of w3af.
-currentDir = os.getcwd()
-scriptDir = os.path.dirname(sys.argv[0]) or '.'
-os.chdir( scriptDir )
+import getopt
+import sys
+import os
+import base64
 
-def backToCurrentDir():
-    os.chdir( currentDir )
+# Perform the GTK UI dependency check, this will verify that the current system
+# has all the modules required to run w3af (including the core dependencies)
+from w3af.core.ui.gui.dependency_check.dependency_check import dependency_check
+dependency_check()
 
-# Translation stuff
-gettext.install('w3af', 'locales/')
+import w3af.core.controllers.output_manager as om
 
-# Now we can load all modules and stuff...
-from core.controllers.w3afException import w3afException
-import core.controllers.outputManager as om
-
-try:
-    om.out.setOutputPlugins( ['console'] )
-except w3afException, w3:
-    print 'Something went wrong, w3af failed to init the output manager. Exception: ', str(w3)
-    sys.exit(-9)
-
-usage_doc = '''
+      
+USAGE_DOC = '''
 w3af - Web Application Attack and Audit Framework
 
 Usage:
 
-    ./w3af_console -h
-    ./w3af_console -f
-    ./w3af_console [-s <script_file>]
+    ./w3af_gui [OPTIONS]
 
 Options:
 
@@ -49,33 +38,49 @@ Options:
     -p <profile> or --profile=<profile>
         Run with the selected <profile>
 
-For more info visit http://w3af.sourceforge.net/
+For more info visit http://w3af.org/
 '''    
 
+
+def _configure_output_manager():
+    """
+    Make sure that the output manager is started before doing anything else,
+    since it is used by most w3af modules
+    """
+    try:
+        om.manager.set_output_plugins(['console'])
+    except Exception, e:
+        print('Something went wrong, w3af failed to start the output manager.')
+        print('Exception: "%s"' % e)
+        sys.exit(-9)
+
+
 def usage():
-    om.out.information(usage_doc)
+    print(USAGE_DOC)
+
 
 def main():
     try:
         long_options = ['help', 'no-update', 'force-update', 'profile=']
-        opts, args = getopt.getopt(sys.argv[1:], "ehnfp:", long_options)
+        opts, _ = getopt.getopt(sys.argv[1:], "ehnfp:", long_options)
     except getopt.GetoptError:
         # print help information and exit:
         usage()
         return -3
+    
     profile = None
     doupdate = None
+    
     for o, a in opts:
-        if o in ( "-e"  ):
+        if o in ("-e"):
             # easter egg
-            import base64
-            om.out.information( base64.b64decode( 'R3JhY2lhcyBFdWdlIHBvciBiYW5jYXJtZSB0YW50YXMgaG9yYXMgZGUgZGVzYXJyb2xsbywgdGUgYW1vIGdvcmRhIQ==' ) )
-        if o == "-s":
-            scriptFile = a
+            msg = 'R3JhY2lhcyBFdWdlIHBvciBiYW5jYXJtZSB0YW50YXMgaG9yYXMgZGUgZGV'\
+                  'zYXJyb2xsbywgdGUgYW1vIGdvcmRhIQ=='
+            print(base64.b64decode(msg))
         if o in ('-p', '--profile'):
             # selected profile
             profile = a
-        if o == "-h":
+        if o in ('-h', '--help'):
             usage()
             return 0
         if o in ('-f', '--force-update'):
@@ -88,13 +93,18 @@ def main():
     if sys.platform != "win32":
         display = os.getenv("DISPLAY")
         if not display:
-            om.out.error("The DISPLAY environment variable is not set! You can not use any graphical program without it...")
+            om.out.error("The DISPLAY environment variable is not set! You can"
+                         " not use any graphical program without it...")
             return -1
-    import core.ui.gtkUi.main
-    core.ui.gtkUi.main.main(profile, doupdate)
+
+    from w3af.core.ui.gui.main import main as gui_main
+    gui_main(profile, doupdate)
+
+
+def _main():
+    _configure_output_manager()
+    sys.exit(main())
+
 
 if __name__ == "__main__":
-    errCode = main()
-    backToCurrentDir()
-    sys.exit(errCode)
-
+    _main()
